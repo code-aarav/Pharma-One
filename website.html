@@ -1,0 +1,587 @@
+<title>PharmaOne | Your Trusted Online Pharmacy & Healthcare Partner</title>
+<meta name="description"
+    content="Order medicines, supplements, and healthcare devices online at PharmaOne. Fast home delivery, authentic products, and 24/7 support.">
+<meta name="keywords" content="online pharmacy, medicine delivery, healthcare products, baby care, fitness supplements">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    body {
+        font-family: 'Inter', sans-serif;
+    }
+</style>
+</head>
+
+<body class="bg-slate-50 text-slate-800">
+
+    <!-- Navbar -->
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center gap-2">
+                    <button onclick="toggleMobileMenu()"
+                        class="md:hidden p-2 text-slate-600 hover:bg-slate-100 rounded-lg">
+                        <i data-lucide="menu" class="h-6 w-6"></i>
+                    </button>
+                    <div class="bg-blue-600 p-2 rounded-lg">
+                        <i data-lucide="pill" class="text-white h-6 w-6"></i>
+                    </div>
+                    <span class="text-xl font-bold text-slate-800">PharmaOne</span>
+                </div>
+                <div class="flex items-center gap-6">
+                    <div class="hidden md:flex gap-6 text-sm font-medium text-slate-600">
+                        <a href="#" class="hover:text-blue-600">Home</a>
+                        <a href="#products" class="hover:text-blue-600">Medicines</a>
+                        <a href="#about" class="hover:text-blue-600">About</a>
+                        <a href="#plans" class="hover:text-blue-600">Plans</a>
+                        <a href="#contact" class="hover:text-blue-600">Contact</a>
+                        <a href="index.html" class="text-blue-600 font-bold">Admin Panel</a>
+                    </div>
+                    <select id="language-selector" onchange="changeLanguage(this.value)"
+                        class="text-xs bg-slate-50 border-none rounded-lg focus:ring-0 cursor-pointer text-slate-600">
+                        <option value="en">English</option>
+                        <option value="ar">العربية</option>
+                        <option value="es">Español</option>
+                        <option value="fr">Français</option>
+                        <option value="hi">हिन्दी</option>
+                        <option value="zh">中文</option>
+                    </select>
+                    <button onclick="toggleCart()"
+                        class="relative p-2 hover:bg-slate-100 rounded-full transition-colors">
+                        <i data-lucide="shopping-bag" class="h-6 w-6 text-slate-700"></i>
+                        <span id="cart-count"
+                            class="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center opacity-0 transition-opacity">0</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu"
+            class="hidden md:hidden absolute top-16 left-0 w-full border-b border-slate-200 bg-white shadow-lg">
+            <div class="px-4 py-4 space-y-3">
+                <a href="#" class="block text-slate-600 hover:text-blue-600 font-medium">Home</a>
+                <a href="#products" class="block text-slate-600 hover:text-blue-600 font-medium">Medicines</a>
+                <a href="#about" class="block text-slate-600 hover:text-blue-600 font-medium">About</a>
+                <a href="#plans" class="block text-slate-600 hover:text-blue-600 font-medium">Plans</a>
+                <a href="#contact" class="block text-slate-600 hover:text-blue-600 font-medium">Contact</a>
+                <a href="index.html" class="block text-blue-600 font-bold">Admin Panel</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="bg-blue-600 text-white py-16">
+        <div
+            class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-8">
+            <div class="md:w-1/2 space-y-6">
+                <h1 class="text-4xl md:text-5xl font-bold leading-tight">Your Health, <br>Our Priority.</h1>
+                <p class="text-blue-100 text-lg">Order medicines, supplements, and healthcare products from the comfort
+                    of your home. Fast delivery guaranteed.</p>
+                <a href="#products"
+                    class="inline-block bg-white text-blue-600 px-8 py-3 rounded-lg font-bold hover:bg-blue-50 transition-colors">Shop
+                    Now</a>
+            </div>
+            <div class="md:w-1/2 flex justify-center">
+                <img src="a.png" class="w-full max-w-lg rounded-xl shadow-lg border-4 border-white/20">
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="bg-white py-10 border-b border-slate-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="flex items-center gap-4 p-4 rounded-xl bg-slate-50">
+                    <div class="bg-blue-100 p-3 rounded-full text-blue-600">
+                        <i data-lucide="truck" class="h-6 w-6"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-900">Free Delivery</h4>
+                        <p class="text-xs text-slate-500">Orders over ₹500</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 p-4 rounded-xl bg-slate-50">
+                    <div class="bg-green-100 p-3 rounded-full text-green-600">
+                        <i data-lucide="shield-check" class="h-6 w-6"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-900">Secure Payment</h4>
+                        <p class="text-xs text-slate-500">100% Safe</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 p-4 rounded-xl bg-slate-50">
+                    <div class="bg-purple-100 p-3 rounded-full text-purple-600">
+                        <i data-lucide="headset" class="h-6 w-6"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-900">24/7 Support</h4>
+                        <p class="text-xs text-slate-500">Ready to help</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 p-4 rounded-xl bg-slate-50">
+                    <div class="bg-orange-100 p-3 rounded-full text-orange-600">
+                        <i data-lucide="award" class="h-6 w-6"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-900">Best Quality</h4>
+                        <p class="text-xs text-slate-500">Authentic Products</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Categories Section -->
+    <div class="bg-slate-50 py-12 border-b border-slate-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-2xl font-bold text-slate-900">Shop by Category</h2>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                <a href="baby-care.html"
+                    class="block bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer group text-center border border-slate-100">
+                    <div
+                        class="h-16 w-16 mx-auto bg-blue-50 rounded-full flex items-center justify-center mb-3 group-hover:bg-blue-600 transition-colors">
+                        <i data-lucide="baby"
+                            class="h-8 w-8 text-blue-600 group-hover:text-white transition-colors"></i>
+                    </div>
+                    <h3 class="font-medium text-slate-700 group-hover:text-blue-600">Baby Care</h3>
+                </a>
+                <a href="personal-care.html"
+                    class="block bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer group text-center border border-slate-100">
+                    <div
+                        class="h-16 w-16 mx-auto bg-green-50 rounded-full flex items-center justify-center mb-3 group-hover:bg-green-600 transition-colors">
+                        <i data-lucide="heart-pulse"
+                            class="h-8 w-8 text-green-600 group-hover:text-white transition-colors"></i>
+                    </div>
+                    <h3 class="font-medium text-slate-700 group-hover:text-green-600">Personal Care</h3>
+                </a>
+                <a href="medicines.html"
+                    class="block bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer group text-center border border-slate-100">
+                    <div
+                        class="h-16 w-16 mx-auto bg-purple-50 rounded-full flex items-center justify-center mb-3 group-hover:bg-purple-600 transition-colors">
+                        <i data-lucide="pill"
+                            class="h-8 w-8 text-purple-600 group-hover:text-white transition-colors"></i>
+                    </div>
+                    <h3 class="font-medium text-slate-700 group-hover:text-purple-600">Medicines</h3>
+                </a>
+                <a href="devices.html"
+                    class="block bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer group text-center border border-slate-100">
+                    <div
+                        class="h-16 w-16 mx-auto bg-orange-50 rounded-full flex items-center justify-center mb-3 group-hover:bg-orange-600 transition-colors">
+                        <i data-lucide="stethoscope"
+                            class="h-8 w-8 text-orange-600 group-hover:text-white transition-colors"></i>
+                    </div>
+                    <h3 class="font-medium text-slate-700 group-hover:text-orange-600">Devices</h3>
+                </a>
+                <a href="fitness.html"
+                    class="block bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer group text-center border border-slate-100">
+                    <div
+                        class="h-16 w-16 mx-auto bg-red-50 rounded-full flex items-center justify-center mb-3 group-hover:bg-red-600 transition-colors">
+                        <i data-lucide="activity"
+                            class="h-8 w-8 text-red-600 group-hover:text-white transition-colors"></i>
+                    </div>
+                    <h3 class="font-medium text-slate-700 group-hover:text-red-600">Fitness</h3>
+                </a>
+                <a href="ayurveda.html"
+                    class="block bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer group text-center border border-slate-100">
+                    <div
+                        class="h-16 w-16 mx-auto bg-teal-50 rounded-full flex items-center justify-center mb-3 group-hover:bg-teal-600 transition-colors">
+                        <i data-lucide="sparkles"
+                            class="h-8 w-8 text-teal-600 group-hover:text-white transition-colors"></i>
+                    </div>
+                    <h3 class="font-medium text-slate-700 group-hover:text-teal-600">Ayurveda</h3>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Section -->
+    <div id="products" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div class="flex justify-between items-end mb-8">
+            <div>
+                <h2 class="text-3xl font-bold text-slate-900">Featured Medicines</h2>
+                <p class="text-slate-500 mt-2">Browse our extensive catalogue of healthcare products.</p>
+            </div>
+            <div class="relative">
+                <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400"></i>
+                <input type="text" id="search-input" placeholder="Search products..."
+                    class="pl-10 pr-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+        </div>
+
+        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Products injected by JS -->
+            <div class="col-span-full text-center py-12">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+                <p class="mt-4 text-slate-500">Loading products...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Section -->
+    <div id="about" class="bg-white py-16 border-t border-slate-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row items-center gap-12">
+                <div class="md:w-1/2">
+                    <img src="e.png" alt="About Us" class="w-full rounded-xl shadow-lg">
+                </div>
+                <div class="md:w-1/2 space-y-6">
+                    <h2 class="text-3xl font-bold text-slate-900">About PharmaOne</h2>
+                    <p class="text-slate-600 text-lg leading-relaxed">
+                        At PharmaOne, powered by advanced AI technology, we are redefining healthcare delivery. Our
+                        mission is to make essential medicines accessible, affordable, and available at your fingertips.
+                    </p>
+                    <div class="grid grid-cols-2 gap-6 pt-4">
+                        <div>
+                            <h4 class="font-bold text-2xl text-blue-600">10k+</h4>
+                            <p class="text-slate-500">Happy Customers</p>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-2xl text-blue-600">24/7</h4>
+                            <p class="text-slate-500">Support Available</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Plans Section -->
+    <div id="plans" class="bg-slate-50 py-16 border-t border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-slate-900">Our Membership Plans</h2>
+                <p class="text-slate-500 mt-2">Choose the best plan for your healthcare needs</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Plan 1 -->
+                <div
+                    class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 hover:shadow-md transition-shadow">
+                    <h3 class="text-xl font-bold text-slate-900">Basic</h3>
+                    <div class="my-4">
+                        <span class="text-4xl font-bold text-slate-900">Free</span>
+                        <span class="text-slate-500">/ month</span>
+                    </div>
+                    <p class="text-slate-500 mb-6">Essential access to medicines and basic support.</p>
+                    <ul class="space-y-3 mb-8 text-sm text-slate-600">
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="h-4 w-4 text-green-500"></i>
+                            Access to all medicines</li>
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="h-4 w-4 text-green-500"></i>
+                            Standard Delivery</li>
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="h-4 w-4 text-green-500"></i>
+                            Email Support</li>
+                    </ul>
+                    <button onclick="document.getElementById('contact').scrollIntoView({ behavior: 'smooth' })"
+                        class="w-full py-3 border border-blue-600 text-blue-600 font-bold rounded-lg hover:bg-blue-50 transition-colors">Get
+                        Started</button>
+                </div>
+
+                <!-- Plan 2 -->
+                <div
+                    class="bg-blue-600 rounded-2xl shadow-lg border border-blue-600 p-8 transform md:-translate-y-4 relative">
+                    <div
+                        class="absolute top-0 right-0 bg-yellow-400 text-yellow-900 text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg">
+                        POPULAR</div>
+                    <h3 class="text-xl font-bold text-white">Premium</h3>
+                    <div class="my-4 text-white">
+                        <span class="text-4xl font-bold">₹499</span>
+                        <span class="text-blue-100">/ month</span>
+                    </div>
+                    <p class="text-blue-100 mb-6">For individuals requiring regular medication.</p>
+                    <ul class="space-y-3 mb-8 text-sm text-blue-50">
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="h-4 w-4 text-white"></i> Free
+                            Express Delivery</li>
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="h-4 w-4 text-white"></i> 10%
+                            Discount on Orders</li>
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="h-4 w-4 text-white"></i> 24/7
+                            Priority Support</li>
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="h-4 w-4 text-white"></i>
+                            Health Checkups Included</li>
+                    </ul>
+                    <button onclick="document.getElementById('contact').scrollIntoView({ behavior: 'smooth' })"
+                        class="w-full py-3 bg-white text-blue-600 font-bold rounded-lg hover:bg-blue-50 transition-colors">Subscribe
+                        Now</button>
+                </div>
+
+                <!-- Plan 3 -->
+                <div
+                    class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 hover:shadow-md transition-shadow">
+                    <h3 class="text-xl font-bold text-slate-900">Family</h3>
+                    <div class="my-4">
+                        <span class="text-4xl font-bold text-slate-900">₹999</span>
+                        <span class="text-slate-500">/ month</span>
+                    </div>
+                    <p class="text-slate-500 mb-6">Complete healthcare coverage for the whole family.</p>
+                    <ul class="space-y-3 mb-8 text-sm text-slate-600">
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="h-4 w-4 text-green-500"></i>
+                            Up to 5 Members</li>
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="h-4 w-4 text-green-500"></i>
+                            Free Express Delivery</li>
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="h-4 w-4 text-green-500"></i>
+                            15% Discount on Orders</li>
+                        <li class="flex items-center gap-2"><i data-lucide="check" class="h-4 w-4 text-green-500"></i>
+                            Monthly Doctor Consult</li>
+                    </ul>
+                    <button onclick="document.getElementById('contact').scrollIntoView({ behavior: 'smooth' })"
+                        class="w-full py-3 border border-blue-600 text-blue-600 font-bold rounded-lg hover:bg-blue-50 transition-colors">Contact
+                        Sales</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Testimonials Section -->
+    <div class="bg-white py-16 border-t border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-slate-900 text-center mb-12">What Our Customers Say</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-slate-50 p-8 rounded-2xl border border-slate-100 relative">
+                    <i data-lucide="quote" class="h-8 w-8 text-blue-200 absolute top-6 right-6"></i>
+                    <div class="flex gap-1 text-yellow-400 mb-4">
+                        <i data-lucide="star" class="h-4 w-4 fill-current"></i>
+                        <i data-lucide="star" class="h-4 w-4 fill-current"></i>
+                        <i data-lucide="star" class="h-4 w-4 fill-current"></i>
+                        <i data-lucide="star" class="h-4 w-4 fill-current"></i>
+                        <i data-lucide="star" class="h-4 w-4 fill-current"></i>
+                    </div>
+                    <p class="text-slate-600 mb-6 italic">"PharmaOne has been a lifesaver! The delivery is always on
+                        time, and the app is so easy to use. Highly recommended."</p>
+                    <div class="flex items-center gap-3">
+                        <div
+                            class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center font-bold text-blue-600">
+                            JD</div>
+                        <div>
+                            <h4 class="font-bold text-slate-900">John Doe</h4>
+                            <p class="text-xs text-slate-500">Regular Customer</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-slate-50 p-8 rounded-2xl border border-slate-100 relative">
+                    <i data-lucide="quote" class="h-8 w-8 text-blue-200 absolute top-6 right-6"></i>
+                    <div class="flex gap-1 text-yellow-400 mb-4">
+                        <i data-lucide="star" class="h-4 w-4 fill-current"></i>
+                        <i data-lucide="star" class="h-4 w-4 fill-current"></i>
+                        <i data-lucide="star" class="h-4 w-4 fill-current"></i>
+                        <i data-lucide="star" class="h-4 w-4 fill-current"></i>
+                        <i data-lucide="star" class="h-4 w-4 fill-current"></i>
+                    </div>
+                    <p class="text-slate-600 mb-6 italic">"Great prices and authentic medicines. I love the subscription
+                        plan for my parents' monthly medication."</p>
+                    <div class="flex items-center gap-3">
+                        <div
+                            class="h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center font-bold text-purple-600">
+                            AS</div>
+                        <div>
+                            <h4 class="font-bold text-slate-900">Sarah Smith</h4>
+                            <p class="text-xs text-slate-500">Premium Member</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-slate-50 p-8 rounded-2xl border border-slate-100 relative">
+                    <i data-lucide="quote" class="h-8 w-8 text-blue-200 absolute top-6 right-6"></i>
+                    <div class="flex gap-1 text-yellow-400 mb-4">
+                        <i data-lucide="star" class="h-4 w-4 fill-current"></i>
+                        <i data-lucide="star" class="h-4 w-4 fill-current"></i>
+                        <i data-lucide="star" class="h-4 w-4 fill-current"></i>
+                        <i data-lucide="star" class="h-4 w-4 fill-current"></i>
+                        <i data-lucide="star-half" class="h-4 w-4 fill-current"></i>
+                    </div>
+                    <p class="text-slate-600 mb-6 italic">"Excellent customer support. They helped me find a substitute
+                        for a medicine that was out of stock elsewhere."</p>
+                    <div class="flex items-center gap-3">
+                        <div
+                            class="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center font-bold text-green-600">
+                            MR</div>
+                        <div>
+                            <h4 class="font-bold text-slate-900">Mike Ross</h4>
+                            <p class="text-xs text-slate-500">Verified Buyer</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Brands Section -->
+    <div class="bg-white py-10 border-t border-slate-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <p class="text-center text-slate-400 text-xs font-bold tracking-widest uppercase mb-8">Trusted Partners</p>
+            <div
+                class="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-40 grayscale hover:grayscale-0 transition-all duration-500">
+                <img src="https://placehold.co/120x40/ffffff/000000?text=Pfizer" alt="Brand" class="h-8">
+                <img src="https://placehold.co/120x40/ffffff/000000?text=GSK" alt="Brand" class="h-8">
+                <img src="https://placehold.co/120x40/ffffff/000000?text=Novartis" alt="Brand" class="h-8">
+                <img src="https://placehold.co/120x40/ffffff/000000?text=Sanofi" alt="Brand" class="h-8">
+                <img src="https://placehold.co/120x40/ffffff/000000?text=Abbott" alt="Brand" class="h-8">
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Section -->
+    <div id="contact" class="bg-slate-50 py-16 border-t border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-slate-900">Contact Us</h2>
+                <p class="text-slate-500 mt-2">Get in touch with our support team</p>
+            </div>
+            <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-sm border border-slate-200 p-8">
+                <form id="contact-form" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Name</label>
+                            <input type="text" name="name" required
+                                class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Email</label>
+                            <input type="email" name="email" required
+                                class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">Message</label>
+                        <textarea name="message" rows="4" required
+                            class="w-full px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                    </div>
+                    <button type="submit"
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition-colors">Send
+                        Message</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Download App Section -->
+    <div class="bg-blue-600 py-16">
+        <div
+            class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-12">
+            <div class="md:w-1/2 text-white space-y-6">
+                <h2 class="text-3xl md:text-4xl font-bold">Download the PharmaOne App</h2>
+                <p class="text-blue-100 text-lg">Get medicines delivered to your doorstep within minutes. Track your
+                    orders, set pill reminders, and consult doctors online.</p>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <button
+                        class="bg-black text-white px-6 py-3 rounded-lg flex items-center gap-3 hover:bg-gray-900 transition-colors">
+                        <i data-lucide="apple" class="h-8 w-8"></i>
+                        <div class="text-left">
+                            <div class="text-[10px] uppercase">Download on the</div>
+                            <div class="font-bold text-sm leading-none">App Store</div>
+                        </div>
+                    </button>
+                    <button
+                        class="bg-black text-white px-6 py-3 rounded-lg flex items-center gap-3 hover:bg-gray-900 transition-colors">
+                        <i data-lucide="play-circle" class="h-8 w-8"></i>
+                        <div class="text-left">
+                            <div class="text-[10px] uppercase">Get it on</div>
+                            <div class="font-bold text-sm leading-none">Google Play</div>
+                        </div>
+                    </button>
+                </div>
+            </div>
+            <div class="md:w-1/2 flex justify-center">
+                <img src="f.png" alt="Mobile App"
+                    class="max-w-full h-auto rounded-3xl shadow-2xl border-8 border-slate-900">
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-300 py-12 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="bg-blue-600 p-1.5 rounded-lg">
+                            <i data-lucide="pill" class="text-white h-5 w-5"></i>
+                        </div>
+                        <span class="text-xl font-bold text-white">PharmaOne</span>
+                    </div>
+                    <p class="text-sm text-slate-400">Your trusted online pharmacy for authentic medicines and
+                        healthcare products.</p>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">Home</a></li>
+                        <li><a href="#products" class="hover:text-blue-400 transition-colors">Medicines</a></li>
+                        <li><a href="#about" class="hover:text-blue-400 transition-colors">About Us</a></li>
+                        <li><a href="#contact" class="hover:text-blue-400 transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-4">Legal</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">Terms of Service</a></li>
+                        <li><a href="#" class="hover:text-blue-400 transition-colors">Return Policy</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-4">Connect</h4>
+                    <div class="flex gap-4">
+                        <a href="#" class="hover:text-blue-400 transition-colors"><i data-lucide="facebook"
+                                class="h-5 w-5"></i></a>
+                        <a href="#" class="hover:text-blue-400 transition-colors"><i data-lucide="twitter"
+                                class="h-5 w-5"></i></a>
+                        <a href="#" class="hover:text-blue-400 transition-colors"><i data-lucide="instagram"
+                                class="h-5 w-5"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-slate-800 pt-8 text-center text-sm text-slate-500">
+                &copy; 2024 PharmaOne. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Cart Sidebar -->
+    <div id="cart-overlay" class="fixed inset-0 bg-black/50 z-[60] hidden transition-opacity" onclick="toggleCart()">
+    </div>
+    <div id="cart-sidebar"
+        class="fixed top-0 right-0 h-full w-full sm:w-96 bg-white z-[70] shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col">
+        <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+            <h2 class="text-lg font-bold flex items-center gap-2"><i data-lucide="shopping-bag" class="h-5 w-5"></i>
+                Your Cart</h2>
+            <button onclick="toggleCart()" class="p-2 hover:bg-slate-200 rounded-full"><i data-lucide="x"
+                    class="h-5 w-5"></i></button>
+        </div>
+
+        <div id="cart-items" class="flex-1 overflow-y-auto p-4 space-y-4">
+            <p class="text-center text-slate-400 mt-10">Your cart is empty</p>
+        </div>
+
+        <div class="p-4 border-t border-slate-100 bg-slate-50 space-y-4">
+            <div class="flex justify-between items-center text-lg font-bold">
+                <span>Total</span>
+                <span id="cart-total">₹0.00</span>
+            </div>
+
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
+                    <input type="text" id="checkout-name" placeholder="Enter your name"
+                        class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Payment Method</label>
+                    <select id="checkout-payment"
+                        class="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="Cash on Delivery">Cash on Delivery</option>
+                        <option value="UPI">UPI / BHIM</option>
+                        <option value="Card">Credit / Debit Card</option>
+                    </select>
+                </div>
+            </div>
+
+            <button onclick="checkout()"
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-bold transition-colors">Place
+                Order</button>
+        </div>
+    </div>
+
+    <script src="website.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pharmacy Dashboard</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Chart.js for Graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Modal Animation */
+        .modal-enter {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+
+        .modal-enter-active {
+            opacity: 1;
+            transform: scale(1);
+            transition: opacity 200ms, transform 200ms;
+        }
+
+        .modal-exit {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .modal-exit-active {
+            opacity: 0;
+            transform: scale(0.95);
+            transition: opacity 200ms, transform 200ms;
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100 transition-colors duration-200">
+
+    <!-- LOGIN SCREEN -->
+    <div id="login-screen"
+        class="fixed inset-0 z-[100] bg-slate-100 dark:bg-slate-900 flex items-center justify-center">
+        <div class="bg-white dark:bg-slate-800 p-8 rounded-xl shadow-lg w-full max-w-md border dark:border-slate-700">
+            <div class="text-center mb-8">
+                <div
+                    class="inline-flex h-12 w-12 items-center justify-center rounded-lg bg-blue-600 text-white font-bold text-2xl mb-4">
+                    P</div>
+                <h1 class="text-2xl font-bold text-slate-900">PharmaOne Admin</h1>
+                <p class="text-slate-500">Sign in to manage your pharmacy</p>
+            </div>
+            <form id="login-form" class="space-y-4" onsubmit="return false;">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Username</label>
+                    <input type="text" id="login-username"
+                        class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                        placeholder="admin">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1">Password</label>
+                    <input type="password" id="login-password"
+                        class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                        placeholder="••••••">
+                </div>
+                <div id="login-error" class="text-red-500 text-sm hidden text-center">Invalid credentials (Try: admin /
+                    admin)</div>
+                <button type="submit" onclick="handleLogin(event)"
+                    class="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-colors">Sign
+                    In</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="dashboard-container" class="flex h-screen overflow-hidden hidden">
+
+        <!-- SIDEBAR -->
+        <aside id="sidebar"
+            class="fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 transform -translate-x-full transition-transform duration-300 md:relative md:translate-x-0 flex flex-col justify-between p-4">
+            <div>
+                <div class="flex items-center justify-between px-2 mb-8 mt-2">
+                    <div class="flex items-center gap-3">
+                        <div
+                            class="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white font-bold text-lg">
+                            P</div>
+                        <span class="text-xl font-bold text-slate-900 dark:text-white">PharmaOne</span>
+                    </div>
+                    <button id="close-sidebar" class="md:hidden text-slate-500">
+                        <i data-lucide="x" class="h-6 w-6"></i>
+                    </button>
+                </div>
+
+                <nav class="space-y-1" id="sidebar-nav">
+                    <!-- Nav items injected by JS -->
+                </nav>
+            </div>
+
+            <button id="btn-logout"
+                class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors w-full">
+                <i data-lucide="log-out" class="h-5 w-5"></i>
+                Sign Out
+            </button>
+        </aside>
+
+        <!-- MOBILE OVERLAY -->
+        <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-40 hidden md:hidden"></div>
+
+        <!-- MAIN CONTENT -->
+        <main class="flex-1 flex flex-col h-screen overflow-hidden w-full">
+
+            <!-- HEADER -->
+            <header
+                class="h-16 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between px-4 sm:px-8 shrink-0 transition-colors">
+                <div class="flex items-center gap-4">
+                    <button id="open-sidebar"
+                        class="md:hidden p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg">
+                        <i data-lucide="menu" class="h-6 w-6"></i>
+                    </button>
+                    <h2 id="page-title" class="text-xl font-semibold text-slate-800 dark:text-white">Dashboard Overview
+                    </h2>
+                </div>
+                <div class="flex items-center gap-4">
+                    <select id="language-selector" onchange="changeLanguage(this.value)"
+                        class="text-xs bg-slate-50 dark:bg-slate-700 border-none rounded-lg focus:ring-0 cursor-pointer text-slate-600 dark:text-slate-300">
+                        <option value="en">English</option>
+                        <option value="ar">العربية</option>
+                        <option value="es">Español</option>
+                        <option value="fr">Français</option>
+                        <option value="hi">हिन्दी</option>
+                        <option value="zh">中文</option>
+                    </select>
+                    <button id="theme-toggle"
+                        class="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors">
+                        <i data-lucide="moon" class="h-6 w-6 hidden dark:block"></i>
+                        <i data-lucide="sun" class="h-6 w-6 block dark:hidden"></i>
+                    </button>
+                    <div class="text-right hidden sm:block">
+                        <p class="text-sm font-medium text-slate-900 dark:text-white">Dr. Alex Morgan</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Admin</p>
+                    </div>
+                    <div
+                        class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700 font-bold">
+                        AM
+                    </div>
+                </div>
+            </header>
+
+            <!-- SCROLLABLE CONTENT -->
+            <div class="flex-1 overflow-y-auto p-4 sm:p-8" id="main-scroll">
+
+                <!-- VIEW: DASHBOARD -->
+                <div id="view-dashboard" class="space-y-6">
+                    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4" id="stats-container"></div>
+
+                    <!-- Sales Graph -->
+                    <div
+                        class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 shadow-sm">
+                        <h3 class="font-semibold text-slate-900 dark:text-white mb-4">Sales Overview (Last 7 Days)</h3>
+                        <canvas id="sales-chart" class="w-full max-h-[300px]"></canvas>
+                    </div>
+
+                    <!-- Store Health & Alerts -->
+                    <div id="store-health-container" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+
+                    <div
+                        class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm overflow-hidden">
+                        <div
+                            class="border-b border-slate-200 dark:border-slate-700 px-6 py-4 flex justify-between items-center">
+                            <h3 class="font-semibold text-slate-900 dark:text-white">Recent Orders</h3>
+                            <button class="text-sm text-blue-600 hover:text-blue-700 font-medium">View All</button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm text-slate-600 dark:text-slate-400">
+                                <thead
+                                    class="bg-slate-50 dark:bg-slate-700 text-xs uppercase text-slate-500 dark:text-slate-300 font-semibold">
+                                    <tr>
+                                        <th class="px-6 py-3">Order ID</th>
+                                        <th class="px-6 py-3">Medicine</th>
+                                        <th class="px-6 py-3">Customer</th>
+                                        <th class="px-6 py-3">Amount</th>
+                                        <th class="px-6 py-3">Status</th>
+                                        <th class="px-6 py-3 text-right">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-200 dark:divide-slate-700" id="orders-table-body">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+
+
+
+                <!-- VIEW: STAFF -->
+                <div id="view-staff" class="hidden space-y-6">
+                    <!-- Tabs -->
+                    <div class="border-b border-slate-200 dark:border-slate-700">
+                        <nav class="-mb-px flex space-x-6 overflow-x-auto" id="staff-tabs">
+                            <!-- Tabs will be injected by JS -->
+                        </nav>
+                    </div>
+
+                    <!-- Tab Content -->
+                    <div id="staff-overview-content">
+                        <!-- Staff grid will go here -->
+                    </div>
+                    <div id="staff-attendance-content" class="hidden">
+                        <!-- Attendance table will go here -->
+                    </div>
+                    <div id="staff-leaves-content" class="hidden">
+                        <!-- Leave management table will go here -->
+                    </div>
+                    <div id="staff-shifts-content" class="hidden">
+                        <!-- Shift planner will go here -->
+                    </div>
+                </div>
+
+                <!-- VIEW: INVENTORY -->
+                <div id="view-inventory" class="hidden space-y-6">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div class="relative w-full max-w-md">
+                            <input type="text" id="inventory-search" placeholder="Search inventory..."
+                                class="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-slate-800 dark:border-slate-700 dark:text-white">
+                            <i data-lucide="search" class="absolute left-3 top-2.5 h-5 w-5 text-slate-400"></i>
+                        </div>
+                        <button id="btn-add-item"
+                            class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center gap-2 transition-colors w-full sm:w-auto justify-center">
+                            <i data-lucide="plus" class="h-4 w-4"></i> Add Medicine
+                        </button>
+                    </div>
+
+                    <div
+                        class="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 shadow-sm overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm text-slate-600">
+                                <thead
+                                    class="bg-slate-50 dark:bg-slate-700 text-xs uppercase text-slate-500 dark:text-slate-300 font-semibold">
+                                    <tr class="text-left">
+                                        <th class="px-2 py-3">Medicine Name</th>
+                                        <th class="px-2 py-3 hidden md:table-cell">Category</th>
+                                        <th class="px-2 py-3 hidden md:table-cell">Label</th>
+                                        <th class="px-2 py-3 hidden lg:table-cell">Rx</th>
+                                        <th class="px-2 py-3 hidden xl:table-cell">Shelf</th>
+                                        <th class="px-2 py-3 hidden lg:table-cell">Exp Date</th>
+                                        <th class="px-2 py-3">Stock</th>
+                                        <th class="px-2 py-3">Price</th>
+                                        <th class="px-2 py-3">Status</th>
+                                        <th class="px-2 py-3 text-right">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-200 dark:divide-slate-700 dark:text-slate-300"
+                                    id="inventory-table-body">
+                                    <!-- Inventory Items Injected Here -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- Empty State (Hidden by default) -->
+                        <div id="inventory-empty" class="hidden p-12 text-center">
+                            <p class="text-slate-500">No medicines found.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: PROFILE -->
+                <div id="view-profile" class="hidden space-y-6">
+                    <h2 class="text-lg font-bold text-slate-800 dark:text-white">User Profile</h2>
+                    <div
+                        class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-8 max-w-2xl">
+                        <div class="flex items-center gap-6 mb-8">
+                            <div
+                                class="h-24 w-24 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-3xl">
+                                AM
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-bold text-slate-900 dark:text-white">Dr. Alex Morgan</h3>
+                                <p class="text-slate-500 dark:text-slate-400">Administrator</p>
+                                <div
+                                    class="mt-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    Active
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid gap-6">
+                            <div class="flex flex-col gap-6 border-t border-slate-100 dark:border-slate-700 pt-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-500 dark:text-slate-400">Email
+                                        Address</label>
+                                    <p class="mt-1 text-slate-900 dark:text-white">alex.morgan@pharmaone.com</p>
+                                </div>
+                                <div>
+                                    <label
+                                        class="block text-sm font-medium text-slate-500 dark:text-slate-400">Phone</label>
+                                    <p class="mt-1 text-slate-900 dark:text-white">+1 (555) 123-4567</p>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-500 dark:text-slate-400">Employee
+                                        ID</label>
+                                    <p class="mt-1 text-slate-900 dark:text-white">EMP-001</p>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-500 dark:text-slate-400">Join
+                                        Date</label>
+                                    <p class="mt-1 text-slate-900 dark:text-white">Jan 15, 2023</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: SETTINGS -->
+                <div id="view-settings" class="hidden space-y-6">
+                    <h2 class="text-lg font-bold text-slate-800 dark:text-white">System Settings</h2>
+                    <div
+                        class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-8 max-w-2xl">
+                        <form id="settings-form" class="space-y-6">
+                            <div class="space-y-2">
+                                <h3 class="text-lg font-medium text-slate-900 dark:text-white">Pharmacy Details</h3>
+                                <p class="text-sm text-slate-500 dark:text-slate-400">Update your pharmacy's global
+                                    information.</p>
+                            </div>
+                            <div class="border-t border-slate-200 dark:border-slate-700 pt-6 space-y-4">
+                                <div>
+                                    <label for="setting-license"
+                                        class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Drug
+                                        License Number</label>
+                                    <input type="text" id="setting-license" name="license"
+                                        class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                                </div>
+                                <div>
+                                    <label for="setting-name"
+                                        class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Pharmacy
+                                        Name</label>
+                                    <input type="text" id="setting-name" name="pharmacyName"
+                                        class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                                </div>
+                                <div>
+                                    <label for="setting-address"
+                                        class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Address</label>
+                                    <textarea id="setting-address" name="address" rows="3"
+                                        class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white"></textarea>
+                                </div>
+                            </div>
+                            <div class="pt-4 flex justify-end">
+                                <button type="submit"
+                                    class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg">Save
+                                    Settings</button>
+                            </div>
+                            <div
+                                class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-8 max-w-2xl mt-6">
+                                <div class="space-y-2">
+                                    <h3
+                                        class="text-lg font-medium text-slate-900 dark:text-white flex items-center gap-2">
+                                        <i data-lucide="cloud" class="h-5 w-5 text-blue-500"></i> Cloud Connectivity
+                                    </h3>
+                                    <p class="text-sm text-slate-500 dark:text-slate-400">Connect to Supabase to sync
+                                        data across all devices (Mobile, PC, Tablet).</p>
+                                </div>
+                                <div class="border-t border-slate-200 dark:border-slate-700 pt-6 mt-6 space-y-4">
+                                    <div>
+                                        <label
+                                            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                                            JSON Storage URL (e.g. JSONBin / Pantry)
+                                        </label>
+                                        <input type="text" id="cloud-url" placeholder="https://api.jsonbin.io/v3/b/..."
+                                            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                                    </div>
+                                    <div>
+                                        <label
+                                            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                                            API Key / Secret (Optional)
+                                        </label>
+                                        <input type="password" id="cloud-key" placeholder="Optional Master Key"
+                                            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                                    </div>
+                                    <button id="btn-connect-cloud" type="button" onclick="handleCloudConnect()"
+                                        class="w-full py-2 bg-slate-900 text-white font-bold rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center gap-2">
+                                        <i data-lucide="zap" class="h-4 w-4"></i> Activate Cloud Mode
+                                    </button>
+                                    <div id="cloud-status" class="text-center text-xs text-slate-400 p-2 hidden"></div>
+                                </div>
+                            </div>
+
+                            <div
+                                class="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-8 max-w-2xl mt-6">
+                                <div class="space-y-2">
+                                    <h3 class="text-lg font-medium text-slate-900 dark:text-white">Data Management</h3>
+                                    <p class="text-sm text-slate-500 dark:text-slate-400">Backup, restore, or reset your
+                                        pharmacy data. Use with caution.</p>
+                                </div>
+                                <div
+                                    class="border-t border-slate-200 dark:border-slate-700 pt-6 mt-6 flex flex-col sm:flex-row gap-4">
+                                    <button id="btn-export-data"
+                                        class="flex-1 px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg flex items-center justify-center gap-2">
+                                        <i data-lucide="download" class="h-4 w-4"></i> Export Data
+                                    </button>
+                                    <button onclick="document.getElementById('import-file-input').click()"
+                                        class="flex-1 px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg flex items-center justify-center gap-2">
+                                        <i data-lucide="upload" class="h-4 w-4"></i> Import Data
+                                    </button>
+                                    <input type="file" id="import-file-input" class="hidden" accept=".json">
+                                    <button id="btn-reset-data"
+                                        class="flex-1 px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg flex items-center justify-center gap-2">
+                                        <i data-lucide="refresh-cw" class="h-4 w-4"></i> Reset Data
+                                    </button>
+                                </div>
+                            </div>
+                    </div>
+
+                </div>
+        </main>
+    </div>
+
+    <!-- ADD ITEM MODAL -->
+    <div id="modal-overlay"
+        class="fixed inset-0 bg-black/50 z-[60] hidden flex items-center justify-center p-4 backdrop-blur-sm transition-opacity">
+        <div id="modal-content"
+            class="bg-white dark:bg-slate-800 rounded-xl shadow-xl w-full max-w-lg transform transition-all scale-95 opacity-0 border dark:border-slate-700">
+            <div class="flex justify-between items-center p-6 border-b border-slate-100 dark:border-slate-700">
+                <h3 id="modal-title" class="text-lg font-semibold text-slate-900 dark:text-white">Add New Medicine</h3>
+                <button id="btn-close-modal" class="text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="h-5 w-5"></i>
+                </button>
+            </div>
+
+            <form id="add-item-form" class="p-6">
+                <input type="hidden" name="id">
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="col-span-2">
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Medicine
+                            Name</label>
+                        <input type="text" name="name" required
+                            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                    </div>
+                    <div class="col-span-2">
+                        <label
+                            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Description</label>
+                        <textarea name="description" rows="2"
+                            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                            placeholder="e.g. For fever and pain relief"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Label
+                            (Target)</label>
+                        <select name="label"
+                            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                            <option value="Adult">Adult</option>
+                            <option value="Child">Child</option>
+                            <option value="Infant">Infant</option>
+                            <option value="General">General</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Prescription
+                            (Rx)</label>
+                        <select name="rx"
+                            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                            <option value="false">No (OTC)</option>
+                            <option value="true">Yes (Rx Req)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Shelf
+                            Location</label>
+                        <input type="text" id="shelf-input" name="shelf" placeholder="e.g. A-12" required
+                            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">GST Tax Rate
+                            (%)</label>
+                        <select name="tax"
+                            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                            <option value="0">0% (Tax Free)</option>
+                            <option value="5">5% (Essential)</option>
+                            <option value="12" selected>12% (Standard)</option>
+                            <option value="18">18% (Premium)</option>
+                        </select>
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Supplier
+                            Name</label>
+                        <input type="text" name="supplier" placeholder="e.g. Sun Pharma"
+                            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Invoice/Batch
+                            Number</label>
+                        <input type="text" name="batchNumber" placeholder="e.g. B-12345"
+                            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Purchase
+                            Date</label>
+                        <input type="date" name="purchaseDate"
+                            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Manufacture
+                            Date</label>
+                        <input type="date" name="mfgDate"
+                            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Expiry
+                            Date</label>
+                        <input type="date" name="expDate" required
+                            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                    </div>
+                    <div>
+                        <label
+                            class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Category</label>
+                        <select name="category" required
+                            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                            <option value="Medicines">Medicines</option>
+                            <option value="Ayurveda">Ayurveda</option>
+                            <option value="Baby Care">Baby Care</option>
+                            <option value="Personal Care">Personal Care</option>
+                            <option value="Fitness">Fitness</option>
+                            <option value="Devices">Devices</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Cost Price
+                            (₹)</label>
+                        <input type="number" name="costPrice" step="0.01" required placeholder="Purchase price"
+                            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Selling Price
+                            (₹)</label>
+                        <input type="number" name="price" step="0.01" required placeholder="Sales price"
+                            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Stock
+                            Qty</label>
+                        <input type="number" name="stock" required
+                            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Status</label>
+                        <select name="status"
+                            class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                            <option value="In Stock">In Stock</option>
+                            <option value="Low Stock">Low Stock</option>
+                            <option value="Out of Stock">Out of Stock</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="pt-6 mt-4 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-3">
+                    <button type="button" id="btn-cancel-modal"
+                        class="px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg border border-slate-300 dark:border-slate-600">Cancel</button>
+                    <button type="submit"
+                        class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg">Add
+                        Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ADD STAFF MODAL -->
+    <div id="staff-modal-overlay"
+        class="fixed inset-0 bg-black/50 z-[60] hidden flex items-center justify-center p-4 backdrop-blur-sm transition-opacity">
+        <div id="staff-modal-content"
+            class="bg-white dark:bg-slate-800 rounded-xl shadow-xl w-full max-w-md transform transition-all scale-95 opacity-0 border dark:border-slate-700">
+            <div class="flex justify-between items-center p-6 border-b border-slate-100 dark:border-slate-700">
+                <h3 id="staff-modal-title" class="text-lg font-semibold text-slate-900 dark:text-white">Add Staff Member
+                </h3>
+                <button id="btn-close-staff-modal" class="text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="h-5 w-5"></i>
+                </button>
+            </div>
+            <form id="add-staff-form" class="p-6 space-y-4">
+                <input type="hidden" name="id">
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Full Name</label>
+                    <input type="text" name="name" required
+                        class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Role</label>
+                    <select name="role"
+                        class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white">
+                        <option>Pharmacist</option>
+                        <option>Cashier</option>
+                        <option>Manager</option>
+                        <option>Stock Clerk</option>
+                    </select>
+                </div>
+                <div class="pt-4 flex justify-end gap-3">
+                    <button type="button" id="btn-cancel-staff-modal"
+                        class="px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg border border-slate-300 dark:border-slate-600">Cancel</button>
+                    <button type="submit"
+                        class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg">Add
+                        Staff</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Helper to determine image based on medicine name
+        function getMedicineImage(name) {
+            const lowerName = (name || '').toLowerCase();
+            if (lowerName.includes('syrup') || lowerName.includes('liquid') || lowerName.includes('suspension') || lowerName.includes('drop') || lowerName.includes('bottle') || lowerName.includes('oil') || lowerName.includes('wash') || lowerName.includes('lotion')) {
+                return 'd.png'; // Bottle
+            } else if (lowerName.includes('tablet') || lowerName.includes('tab') || lowerName.includes('strip') || lowerName.includes('pills')) {
+                return 'c.png'; // Blister pack
+            } else {
+                return 'b.png'; // Capsule (Default)
+            }
+        }
+
+        // Observer to update images in POS grid when they are rendered
+        const posObserver = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.addedNodes.length) {
+                    const images = document.querySelectorAll('#pos-grid img, #cart-items img');
+                    images.forEach(img => {
+                        // If image is missing or is a placeholder, update it
+                        if (!img.src || img.src.includes('placehold') || img.src.includes('data:image')) {
+                            // Try to find the name in the parent container
+                            const container = img.closest('div');
+                            const nameEl = container ? container.innerText : '';
+                            if (nameEl) {
+                                img.src = getMedicineImage(nameEl);
+                            }
+                        }
+                    });
+                }
+            });
+        });
+
+        // Start observing the POS grid and Cart
+        const posGrid = document.getElementById('pos-grid');
+        if (posGrid) posObserver.observe(document.body, { childList: true, subtree: true });
+    </script>
+    <script src="cloud_setup.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

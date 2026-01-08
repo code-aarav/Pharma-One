@@ -1,0 +1,18 @@
+{
+  "inventory": [],
+  "sales": [],
+  "staff": [],
+  "customers": [],
+  "expenses": [],
+  "payroll": [],
+  "attendance": [],
+  "leaves": [],
+  "shifts": [],
+  "defectives": [],
+  "credits": [],
+  "settings": {
+    "pharmacyName": "PharmaOne",
+    "address": "123 Medical Lane",
+    "license": "LIC-123456"
+  }
+}
