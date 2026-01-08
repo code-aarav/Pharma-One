@@ -209,15 +209,6 @@ const DataService = {
                 console.error("API Login Error:", error);
                 return { success: false, message: "Server connection failed" };
             }
-        } else if (supabaseClient) {
-            const { data, error } = await supabaseClient
-                .from('staff')
-                .select('*')
-                .eq('username', username)
-                .eq('password', password)
-                .single();
-            if (data) return { success: true, user: data };
-            return { success: false, message: "Cloud login failed" };
         } else {
             // Local Mock Logic
             // RESCUE BACKDOOR
